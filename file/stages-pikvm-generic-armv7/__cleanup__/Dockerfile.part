@@ -1,0 +1,21 @@
+RUN rm -rf \
+		/etc/*- \
+		/var/lib/systemd/* \
+		/var/lib/private/* \
+		/var/log/* \
+		/var/tmp/* \
+		/tmp/* \
+		/run/* \
+		/root/.bash_history \
+		/root/.cache \
+		/home/*/.bash_history \
+		/home/*/.cache \
+	`LC_ALL=C pacman -Qo /var/cache/* 2>&1 | grep 'error: No package owns' | awk '{print $5}'`
+
+RUN sed -i -e "s/^#!!!CheckSpace/CheckSpace/g" /etc/pacman.conf
+
+RUN rm -f \
+	/usr/local/bin/pkg-install \
+	/usr/local/lib/libpreload-semop.so
+
+ENV LD_PRELOAD=
