@@ -9,8 +9,8 @@ export TIMEZONE='Asia/Taipei'
 export REPO_URL='http://mirror.archlinuxarm.org'
 export BUILDER_URL='https://github.com/mdevaev/pi-builder'
 export _BUILDER_DIR='./pi-builder'
-export PIKVM_REPO_URL='https://pikvm.org/repos/'
-export PIKVM_REPO_KEY='912C773ABBD1B584'
+export PIKVM_REPO_URL='https://raw.githubusercontent.com/Yura80/pikvm-repo/main'
+export PIKVM_REPO_KEY='39CCCE14BFBB5D69'
 
 # export NEW_HTTPS_CERT=
 
