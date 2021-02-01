@@ -1,0 +1,22 @@
+kvmd-nginx.service - Pi-KVM - HTTP entrypoint
+     Loaded loaded (usrlibsystemdsystemkvmd-nginx.service; enabled; vendor preset disabled)
+     Active active (running) since Thu 2021-01-28 103436 CST; 22min ago
+    Process 339 ExecStart=usrbinnginx -p etckvmdnginx -c etckvmdnginxnginx.conf -g pid runkvmdnginx.pid; user kvmd-nginx; error_log stderr; (co
+   Main PID 345 (nginx)
+      Tasks 5 (limit 2349)
+     Memory 6.3M
+     CGroup system.slicekvmd-nginx.service
+             ├─345 nginx master process usrbinnginx -p etckvmdnginx -c etckvmdnginxnginx.conf -g pid runkvmdnginx.pid; user kvmd-nginx; error_l
+             ├─346 nginx worker process
+             ├─347 nginx worker process
+             ├─348 nginx worker process
+             └─349 nginx worker process
+
+Jan 28 103436 alarm systemd[1] Starting Pi-KVM - HTTP entrypoint...
+Jan 28 103436 alarm systemd[1] Started Pi-KVM - HTTP entrypoint.
+Jan 28 104818 alarm nginx[346] 20210128 104818 [crit] 346#346 3 connect() to unixrunkvmdkvmd.sock failed (2 No such file or directory) while co
+Jan 28 104818 alarm nginx[346] 20210128 104818 [crit] 346#346 3 connect() to unixrunkvmdkvmd.sock failed (2 No such file or directory) while co
+Jan 28 104921 alarm nginx[346] 20210128 104921 [crit] 346#346 3 connect() to unixrunkvmdkvmd.sock failed (2 No such file or directory) while co
+Jan 28 104921 alarm nginx[346] 20210128 104921 [crit] 346#346 3 connect() to unixrunkvmdkvmd.sock failed (2 No such file or directory) while co
+Jan 28 104921 alarm nginx[346] 20210128 104921 [error] 346#346 3 auth request unexpected status 502 while sending to client, client 192.168.50.139
+Jan 28 104921 alarm nginx[346] 20210128 104921 [error] 346#346 3 auth request unexpected status 502 while sending to client, client 192.168.50.139

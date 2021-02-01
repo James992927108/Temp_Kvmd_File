@@ -14,14 +14,14 @@ export PIKVM_REPO_KEY='39CCCE14BFBB5D69'
 
 # export NEW_HTTPS_CERT=
 
-# echo "Go to init.sh.."
-# source ./init.sh
+echo "Go to init.sh.."
+source ./init.sh
 
-# echo "Go to os.sh.."
-# . ./os.sh
+echo "Go to os.sh.."
+. ./os.sh
 
-# echo "Go to pikvm-repo.sh.."
-# . ./pikvm-repo.sh
+echo "Go to pikvm-repo.sh.."
+. ./pikvm-repo.sh
 
 echo "Go to pikvm.sh.."
 . ./pikvm.sh
