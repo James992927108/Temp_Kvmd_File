@@ -1,4 +1,4 @@
-
+#!/bin/sh
 pacman-key --init
 pacman-key --populate
 pacman --noconfirm -Sy archlinux-keyring

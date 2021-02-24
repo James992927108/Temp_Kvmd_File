@@ -1,3 +1,0 @@
-RUN case "$BOARD" in \
-		rpi3|rpi4|zerow) echo "dtoverlay=disable-bt" >> /boot/config.txt;; \
-	esac

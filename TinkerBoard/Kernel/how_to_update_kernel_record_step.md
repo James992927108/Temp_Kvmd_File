@@ -7,42 +7,45 @@
 2. 完成後，重新連接 tinkerboards 與 pc 的 usb，會有兩個分區,
 第一個分區taye 為 fat，存放 boot 資料:第二個為 ext4，存放 rootfs（一般就是linux發行版本）。在 window 上應該只能看到第一個分區（boot）,linux 則可看到兩個分區。
 
-3. 移除連接中的 tinkerboards 裝置, 一般是掛載在 /dev/sdX，X-> 取決於有幾個外接usb除存裝置，如果 tinkerboard 為第二個，則為 sdb, 第一個分區為 sdb1，以此類推數字與分區關係。
+<!-- 3. 移除連接中的 tinkerboards 裝置, 一般是掛載在 /dev/sdX，X-> 取決於有幾個外接usb除存裝置，如果 tinkerboard 為第二個，則為 sdb, 第一個分區為 sdb1，以此類推數字與分區關係。
 
-    `sudo umount /dev/sdb*`
+    `sudo umount /dev/sdb*` -->
 
 4. 在桌面建立 arch 資料夾並下載 archlinuxarm image 檔案[Download](https://archlinuxarm.org/about/downloads), 因為tinkerboards 使用 rk3288 Soc 為 armv7 架構，所以選擇 ArchLinuxARM-armv7-latest.tar.gz。在arch資料夾底下建立 boot 和 rootfs 兩個資料夾。
-arch|-boot
-    |-rootfs
-    |-ArchLinuxARM-armv7-latest.tar.gz
 
-5. 因為目前 /dev/sdb2 上面是官方 debain 中的檔案，因此格式化磁區。
+    ```
+    arch|-boot
+        |-rootfs
+        |-ArchLinuxARM-armv7-latest.tar.gz
+    ```
 
-    `yes | sudo mkfs.ext4 /dev/sdb4`
+5. 查看 tinkerboards 掛載的路徑
+    > df -a 或者 sudo fdisk -l
 
-6. 將/dev/sdb1 掛載到剛建立的 boot, /dev/sdb2 -> rootfs 上 
+<!-- 5. 假設因為目前 /dev/sdb2 上面是官方 debain 中的檔案，刪除資料夾中所有檔案。
 
-    `sudo mount /dev/sdb1 ~/Desktop/arch/boot/`
+    `yes | sudo mkfs.ext4 /dev/sdb4` -->
 
-    `sudo mount /dev/sdb2 ~/Desktop/arch/rootfs/`
+6. 假設掛載路徑為 /dev/sdb，分區 1 為 sdb1，分區 2 為 sdb2，並掛載到對應 boot 和 rootfs 資料夾。
+    > sudo mount /dev/sdb1 ~/Desktop/arch/boot  
+    sudo mount /dev/sdb2 ~/Desktop/arch/rootfs
 
-7. 解壓縮 ArchLinuxARM-armv7-latest.tar.gz 到 rootfs
+7. 因為要安裝 archlinuxarm，所以先刪除 rootfs 資料夾中所有檔案，不需要重新格式化，保留分區原本的 UUID
+    > cd ~/Desktop/arch/rootfs  
+    sudo rm -rf *  
+ 
+8. 解壓縮 ArchLinuxARM-armv7-latest.tar.gz 到 rootfs
+    > sudo tar -zxf ArchLinuxARM-armv7-latest.tar.gz -C ~/Desktop/arch/rootfs
 
-    `sudo tar -zxf ArchLinuxARM-armv7-latest.tar.gz -C ~/Desktop/arch/rootfs`
-
-8. 解壓縮完，一定要先 sync 完成後在卸載 boot 和 rootfs  
-    `sudo sync`
-    
+9. 解壓縮完，一定要先 sync 完成後在卸載 boot 和 rootfs  
+    > sudo sync
     需要一段時間，可以透過以下指令看目前進度，當 writeback 為 0 即為完成。
-    
-    `watch -d grep -e Dirty: -e Writeback: /proc/meminfo`
+    > watch -d grep -e Dirty: -e Writeback: /proc/meminfo
 
-9. 移除連結 pc 的 usb, 並改使用 vcc usb 以及 hdmi 連接 tinkerboards，等待 5～20 秒, 應該是可以正常啟動。
+10. (直接參考 Update kernel) 移除連結 pc 的 usb, 並改使用 vcc usb 以及 hdmi 連接 tinkerboards，等待 5～20 秒, 應該是可以正常啟動。
 
     update: tinkeros 中的 linux kernel 為 4.4.x，但 archlinuxarm 以使用上 5.11.x ,可能會出現錯誤，參考更新 kernel 章節。
     
-    <!-- end Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0) archlinux arm  -->
-
 ### Update kernel
 
 reference: [Update TinkerBoard Kernel](https://gist.github.com/TinkerTeam/6286550ce70d34f6b3d483cd803da786#gistcomment-3563189)
@@ -88,30 +91,48 @@ Tinker's dts is in mainline kernel, under the name rk3288-tinker-s.dts.(see: arm
     > cd ~Desktop/arch/boot  
     sudo rm rk3288-miniarm.dtb
 
-9. Copy initramfs-linux.img to boot(partion 1)
-   > cd ~/Desktop/arch/rootfs/boot  
+9. Install modules to rootfs(partion 2)
+(if kernel is 5.11.0, file will install in /lib/modules/5.11.0)
+    > sudo make ARCH=arm INSTALL_MOD_PATH=~/Desktop/arch/rootfs modules_install
+
+10. Copy initramfs-linux.img to boot(partion 1)
+    > cd ~/Desktop/arch/rootfs/boot  
    sudo cp initramfs-linux.img ~/Desktop/arch/boot
 
-10. Get rootfs UUID
+11. Get rootfs UUID
     > 1. go to *Show Application*
     > 2. search *Disks*
     > 3. select *TinkerBoard UMS* and *Filesystem Partition 2*
     > 4. look UUID
-    > <img src="img/Disks.png" alt="drawing"/>
+    > <img src="img/disks.png" alt="drawing"/>
 
 9. Modity extlinux.conf
     ```
-    label kernel-5.10.17
+    label kernel-5.11.0
         kernel /zImage
         fdt /rk3288-tinker-s.dtb
         initrd /initramfs-linux.img
         append console=ttyS3,115200n8 earlyprintk quiet splash plymouth.ignore-serial-consoles root=UUID=68781559-87cf-43d3-8a94-fd4294d6ef72 console=tty1 rw init=/sbin/init
     ```
-### how to use uart to debug?
-if use uart3, need to modifty extlinux and append *console=ttyS3,115200n8*
+10. connect power and check
+    > <img src="img/uname_pacman_version.png" alt="drawing"/>
 
-use *USB convert UART TTL*
-    > <img src="img/Gpio-pinout.png" alt="drawing"/>
+### How to check if the modules have loaded in linux kernel ?
+> lsmod  
+- if there is nothing, try to use 
+    > depmod -a
+### How to use uart to debug?
+if use uart3, need to modifty extlinux
+- append *console=ttyS3,115200n8*  
+    from  
+    'append earlyprintk quiet splash plymouth.ignore-serial-consoles root=UUID=68781559-87cf-43d3-8a94-fd4294d6ef72 console=tty1 rw init=/sbin/init'  
+    to  
+    'append console=ttyS3,115200n8 earlyprintk quiet splash plymouth.ignore-serial-consoles root=UUID=68781559-87cf-43d3-8a94-fd4294d6ef72 console=tty1 rw init=/sbin/init'
+- use *USB convert UART TTL* to connect tinkerboard and pc by follow: 
+    > <img src="img/gpio-pinout.png" alt="drawing"/>
+
+- pc(host) open terminal use:
+> sudo minicom -D /dev/ttyUSB0 -b 115200 
 
 ### 如何使用 onboard emmc？
 參考官網 setup 頁面：
