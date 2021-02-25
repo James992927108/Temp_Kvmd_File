@@ -1,131 +1,0 @@
-make -C ./pi-builder/generic-aarch64 install \
-	CARD=/dev/sdb \
-	BOARD=generic \
-	ARCH=aarch64 \
-	UBOOT=rock64 \
-	CARD_DATA_FS_TYPE=ext4 \
-	CARD_DATA_FS_FLAGS=-m0
-make[1]: Entering directory '/home/aaa/Desktop/os/pi-builder/generic-aarch64'
-[1m[32m===== Ensuring toolbox image =====
-(B[mdocker build \
-		--rm \
-		--tag pi-builder-aarch64-toolbox \
-		 \
-		--file toolbox/Dockerfile.root \
-	toolbox
-Sending build context to Docker daemon  15.36kB
-Step 1/5 : FROM archlinux/base
- ---> a79c9d41e4ac
-Step 2/5 : RUN pacman --noconfirm -Syu 	&& pacman --needed --noconfirm -S 		base-devel 		arp-scan 		python 		parted 		dosfstools 		rsync 	&& (pacman --noconfirm -Sc || true)
- ---> Using cache
- ---> b0dd896083de
-Step 3/5 : RUN mkdir /tools
- ---> Using cache
- ---> d4fc5c342404
-Step 4/5 : COPY install-binfmt /tools/
- ---> Using cache
- ---> 9ac27dc9af26
-Step 5/5 : COPY docker-extract /tools/
- ---> Using cache
- ---> 00264f2d3a5b
-Successfully built 00264f2d3a5b
-Successfully tagged pi-builder-aarch64-toolbox:latest
-[1m[32m===== Toolbox image is ready =====
-(B[m[1m[32m===== Extracting image from Docker =====
-(B[mdocker run --rm --tty --volume /home/aaa/Desktop/os/pi-builder/generic-aarch64/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. pi-builder-aarch64-toolbox rm -rf ./.tmp/result-rootfs
-docker save --output ./.tmp/result-rootfs.tar pikvm-os-v2-hdmiusb-pi-builder-aarch64-result-generic
-docker run --rm --tty --volume /home/aaa/Desktop/os/pi-builder/generic-aarch64/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. pi-builder-aarch64-toolbox /tools/docker-extract --root ./.tmp/result-rootfs ./.tmp/result-rootfs.tar
-docker run --rm --tty --volume /home/aaa/Desktop/os/pi-builder/generic-aarch64/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. pi-builder-aarch64-toolbox bash -c " \
-	echo pikvm > ./.tmp/result-rootfs/etc/hostname \
-	&& (test -z '1' || rm ./.tmp/result-rootfs//usr/bin/qemu-aarch64-static) \
-"
-[1m[32m===== Extraction complete =====
-(B[m[1m[32m===== Formatting /dev/sdb =====
-(B[mdocker run --rm --tty --privileged --volume /home/aaa/Desktop/os/pi-builder/generic-aarch64/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. pi-builder-aarch64-toolbox bash -c " \
-	set -x \
-	&& set -e \
-	&& dd if=/dev/zero of=/dev/sdb bs=1M count=32 \
-	&& partprobe /dev/sdb \
-"
-+ set -e
-+ dd if=/dev/zero of=/dev/sdb bs=1M count=32
-32+0 records in
-32+0 records out
-33554432 bytes (34 MB, 32 MiB) copied, 2.51529 s, 13.3 MB/s
-+ partprobe /dev/sdb
-docker run --rm --tty --privileged --volume /home/aaa/Desktop/os/pi-builder/generic-aarch64/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. pi-builder-aarch64-toolbox bash -c " \
-	set -x \
-	&& set -e \
-	&& parted /dev/sdb -s mklabel msdos \
-	&& parted /dev/sdb -a optimal -s mkpart primary fat32 32MiB 256MiB \
-	&& parted /dev/sdb -a optimal -s mkpart primary ext4 256MiB 4352MiB \
-	&& parted /dev/sdb -a optimal -s mkpart primary ext4 4352MiB 100% \
-	&& partprobe /dev/sdb \
-"
-+ set -e
-+ parted /dev/sdb -s mklabel msdos
-+ parted /dev/sdb -a optimal -s mkpart primary fat32 32MiB 256MiB
-+ parted /dev/sdb -a optimal -s mkpart primary ext4 256MiB 4352MiB
-+ parted /dev/sdb -a optimal -s mkpart primary ext4 4352MiB 100%
-+ partprobe /dev/sdb
-docker run --rm --tty --privileged --volume /home/aaa/Desktop/os/pi-builder/generic-aarch64/./.tmp:/root/./.tmp --workdir /root/./.tmp/.. pi-builder-aarch64-toolbox bash -c " \
-	set -x \
-	&& set -e \
-	&& yes | mkfs.vfat /dev/sdb1 \
-	&& yes | mkfs.ext4 /dev/sdb2 \
-	&& yes | mkfs.ext4 -m0 /dev/sdb3 \
-"
-+ set -e
-+ yes
-+ mkfs.vfat /dev/sdb1
-mkfs.fat 4.1 (2017-01-24)
-+ yes
-+ mkfs.ext4 /dev/sdb2
-mke2fs 1.45.6 (20-Mar-2020)
-Creating filesystem with 1048576 4k blocks and 262144 inodes
-Filesystem UUID: 95ae294b-86b5-4e6e-bad6-c98c4f10563a
-Superblock backups stored on blocks: 
-	32768, 98304, 163840, 229376, 294912, 819200, 884736
-
-Allocating group tables:  0/32     done                            
-Writing inode tables:  0/32     done                            
-Creating journal (16384 blocks): done
-Writing superblocks and filesystem accounting information:  0/32     done
-
-+ yes
-+ mkfs.ext4 -m0 /dev/sdb3
-mke2fs 1.45.6 (20-Mar-2020)
-Creating filesystem with 2702848 4k blocks and 675952 inodes
-Filesystem UUID: 2dfce074-814e-4d11-a7b1-d9edc331c1e3
-Superblock backups stored on blocks: 
-	32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208
-
-Allocating group tables:  0/83     done                            
-Writing inode tables:  0/83     done                            
-Creating journal (16384 blocks): done
-Writing superblocks and filesystem accounting information:  0/83     done
-
-[1m[32m===== Format complete =====
-(B[m[1m[32m===== Installing U-Boot rock64 to /dev/sdb =====
-(B[mdocker run \
-	--rm \
-	--tty \
-	--volume `pwd`/./.tmp/result-rootfs/boot:/tmp/boot \
-	--device /dev/sdb:/dev/mmcblk0 \
-	--hostname pikvm \
-	pikvm-os-v2-hdmiusb-pi-builder-aarch64-result-generic \
-	bash -c " \
-		echo 'y' | pacman --noconfirm -Syu uboot-pikvm-rock64 \
-		&& cp -a /boot/* /tmp/boot/ \
-	"
-:: Synchronizing package databases...
- core is up to date
- extra                   0.0   B  0.00   B/s 00:00 [----------------------]   0% extra                 882.2 KiB  1470 KiB/s 00:00 [########--------------]  37% extra                1329.0 KiB  1512 KiB/s 00:00 [############----------]  57% extra                1644.4 KiB  1378 KiB/s 00:00 [###############-------]  70% extra                1982.3 KiB  1305 KiB/s 00:00 [##################----]  85% extra                   2.3 MiB  1257 KiB/s 00:00 [#####################-]  99% extra                   2.3 MiB   849 KiB/s 00:00 [#####################-]  99% extra                   2.3 MiB  1252 KiB/s 00:02 [######################] 100%
- community               0.0   B  0.00   B/s 00:00 [----------------------]   0% community             889.3 KiB   805 KiB/s 00:05 [###-------------------]  17% community            1203.2 KiB   922 KiB/s 00:04 [#####-----------------]  23% community            1527.0 KiB  1000 KiB/s 00:03 [######----------------]  29% community            1915.9 KiB  1072 KiB/s 00:03 [########--------------]  37% community               2.2 MiB  1087 KiB/s 00:02 [#########-------------]  43% community               2.5 MiB  1104 KiB/s 00:02 [###########-----------]  50% community               2.9 MiB  1122 KiB/s 00:01 [############----------]  57% community               3.3 MiB  1125 KiB/s 00:01 [##############--------]  65% community               3.7 MiB  1544 KiB/s 00:00 [################------]  74% community               4.0 MiB  1416 KiB/s 00:00 [#################-----]  78% community               4.2 MiB  1340 KiB/s 00:00 [##################----]  83% community               4.4 MiB  1285 KiB/s 00:00 [###################---]  88% community               4.6 MiB  1224 KiB/s 00:00 [####################--]  92% community               4.9 MiB  1200 KiB/s 00:00 [#####################-]  96% community               5.0 MiB  1012 KiB/s 00:05 [######################] 100%
- alarm is up to date
- aur is up to date
- pikvm                   0.0   B  0.00   B/s 00:00 [----------------------]   0% pikvm                  22.5 KiB  0.00   B/s 00:00 [######################] 100%
-error: target not found: uboot-pikvm-rock64
-make[1]: *** [Makefile:392: install-uboot] Error 1
-make[1]: Leaving directory '/home/aaa/Desktop/os/pi-builder/generic-aarch64'
-make: *** [Makefile:105: install] Error 2

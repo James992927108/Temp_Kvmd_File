@@ -1,0 +1,28 @@
+[root@alarm bin]# kvmd --run
+kvmd.apps.kvmd                    INFO --- Using internal auth service 'htpasswd'
+kvmd.plugins.msd.otg              INFO --- Using OTG gadget 'kvmd' as MSD
+kvmd.plugins.msd.otg             ERROR --- Error while reloading MSD state; switching to offline
+Traceback (most recent call last):
+  File "/usr/lib/python3.9/site-packages/kvmd/plugins/msd/otg/__init__.py", line 419, in __reload_state
+    drive_state = self.__get_drive_state()
+  File "/usr/lib/python3.9/site-packages/kvmd/plugins/msd/otg/__init__.py", line 481, in __get_drive_state
+    path = self.__drive.get_image_path()
+  File "/usr/lib/python3.9/site-packages/kvmd/plugins/msd/otg/drive.py", line 55, in get_image_path
+    return self.__get_param("file")
+  File "/usr/lib/python3.9/site-packages/kvmd/plugins/msd/otg/drive.py", line 72, in __get_param
+    with open(os.path.join(self.__path, param)) as param_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/sys/kernel/config/usb_gadget/kvmd/functions/mass_storage.usb0/lun.0/file'
+kvmd.keyboard.keysym              INFO --- Reading keyboard layout /usr/share/kvmd/keymaps/en-us ...
+kvmd.apps.kvmd.server             INFO --- Preparing User-GPIO drivers ...
+Traceback (most recent call last):
+  File "/usr/bin/kvmd", line 9, in <module>
+    main()
+  File "/usr/lib/python3.9/site-packages/kvmd/apps/kvmd/__init__.py", line 72, in main
+    KvmdServer(
+  File "/usr/lib/python3.9/site-packages/kvmd/apps/kvmd/server.py", line 289, in run
+    component.sysprep()
+  File "/usr/lib/python3.9/site-packages/kvmd/apps/kvmd/ugpio.py", line 285, in sysprep
+    driver.prepare()
+  File "/usr/lib/python3.9/site-packages/kvmd/plugins/ugpio/gpio.py", line 68, in prepare
+    self.__chip = gpiod.Chip(env.GPIO_DEVICE_PATH)
+FileNotFoundError: [Errno 2] No such file or directory

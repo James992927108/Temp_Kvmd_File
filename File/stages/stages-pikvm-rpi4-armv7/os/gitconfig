@@ -1,9 +1,0 @@
-[color]
-	log = no
-	diff = no
-	grep = no
-	status = auto
-	branch = auto
-
-[core]
-	editor = vim

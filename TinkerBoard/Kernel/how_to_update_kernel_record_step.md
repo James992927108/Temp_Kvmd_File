@@ -11,10 +11,10 @@
 
     `sudo umount /dev/sdb*` -->
 
-4. 在桌面建立 arch 資料夾並下載 archlinuxarm image 檔案[Download](https://archlinuxarm.org/about/downloads), 因為tinkerboards 使用 rk3288 Soc 為 armv7 架構，所以選擇 ArchLinuxARM-armv7-latest.tar.gz。在arch資料夾底下建立 boot 和 rootfs 兩個資料夾。
+4. 在桌面建立 armv7 資料夾並下載 archlinuxarm image 檔案[Download](https://archlinuxarm.org/about/downloads), 因為tinkerboards 使用 rk3288 Soc 為 armv7 架構，所以選擇 ArchLinuxARM-armv7-latest.tar.gz。在arch資料夾底下建立 boot 和 rootfs 兩個資料夾。
 
     ```
-    arch|-boot
+    armv7|-boot
         |-rootfs
         |-ArchLinuxARM-armv7-latest.tar.gz
     ```
@@ -27,15 +27,15 @@
     `yes | sudo mkfs.ext4 /dev/sdb4` -->
 
 6. 假設掛載路徑為 /dev/sdb，分區 1 為 sdb1，分區 2 為 sdb2，並掛載到對應 boot 和 rootfs 資料夾。
-    > sudo mount /dev/sdb1 ~/Desktop/arch/boot  
-    sudo mount /dev/sdb2 ~/Desktop/arch/rootfs
+    > sudo mount /dev/sdb1 ~/Desktop/armv7/boot  
+    sudo mount /dev/sdb2 ~/Desktop/armv7/rootfs
 
 7. 因為要安裝 archlinuxarm，所以先刪除 rootfs 資料夾中所有檔案，不需要重新格式化，保留分區原本的 UUID
-    > cd ~/Desktop/arch/rootfs  
+    > cd ~/Desktop/armv7/rootfs  
     sudo rm -rf *  
  
 8. 解壓縮 ArchLinuxARM-armv7-latest.tar.gz 到 rootfs
-    > sudo tar -zxf ArchLinuxARM-armv7-latest.tar.gz -C ~/Desktop/arch/rootfs
+    > sudo tar -zxf ArchLinuxARM-armv7-latest.tar.gz -C ~/Desktop/armv7/rootfs
 
 9. 解壓縮完，一定要先 sync 完成後在卸載 boot 和 rootfs  
     > sudo sync
@@ -61,10 +61,10 @@ reference: [Update TinkerBoard Kernel](https://gist.github.com/TinkerTeam/628655
 
 3. Copy kernel config  
     - Tinkerboard:    
-        > sudo cp Kernel/miniarm-rk3288_tinkerboard_defconfig ~/Desktop/linux/arch/arm/configs/miniarm-rk3288_tinkerboard_defconfig
+        > sudo cp Kernel/miniarm-rk3288_tinkerboard_defconfig ~/Desktop/linux/armv7/arm/configs/miniarm-rk3288_tinkerboard_defconfig
 
     - armbain(default use this):   
-        > sudo cp Kernel/miniarm-rk3288_armbain_defconfig ~/Desktop/linux/arch/arm/configs/miniarm-rk3288_armbain_defconfig
+        > sudo cp Kernel/miniarm-rk3288_armbain_defconfig ~/Desktop/linux/armv7/arm/configs/miniarm-rk3288_armbain_defconfig
 
 4. Configure the kernel
     > sudo make ARCH=miniarm-rk3288_armbain_defconfig -j16
@@ -81,23 +81,23 @@ Tinker's dts is in mainline kernel, under the name rk3288-tinker-s.dts.(see: arm
 
 7. Copy new kernel, rk3288-tinker-s.dtb to boot(partion 1)
     - kernel:
-        > cd ~/Desktop/linux/arch/arm/boot/  
-        cp zImage ~/Desktop/arch/boot
+        > cd ~/Desktop/linux/armv7/arm/boot/  
+        cp zImage ~/Desktop/armv7/boot
     - device tree binary:
-        >cd ~/Desktop/linux/arch/arm/boot/dts/   
-        cp rk3288-tinker-s.dtb ~/Desktop/arch/boot
+        >cd ~/Desktop/linux/armv7/arm/boot/dts/   
+        cp rk3288-tinker-s.dtb ~/Desktop/armv7/boot
 
 8. (option) remove the original device tree binary file
-    > cd ~Desktop/arch/boot  
+    > cd ~Desktop/armv7/boot  
     sudo rm rk3288-miniarm.dtb
 
 9. Install modules to rootfs(partion 2)
 (if kernel is 5.11.0, file will install in /lib/modules/5.11.0)
-    > sudo make ARCH=arm INSTALL_MOD_PATH=~/Desktop/arch/rootfs modules_install
+    > sudo make ARCH=arm INSTALL_MOD_PATH=~/Desktop/armv7/rootfs modules_install
 
 10. Copy initramfs-linux.img to boot(partion 1)
-    > cd ~/Desktop/arch/rootfs/boot  
-   sudo cp initramfs-linux.img ~/Desktop/arch/boot
+    > cd ~/Desktop/armv7/rootfs/boot  
+   sudo cp initramfs-linux.img ~/Desktop/armv7/boot
 
 11. Get rootfs UUID
     > 1. go to *Show Application*

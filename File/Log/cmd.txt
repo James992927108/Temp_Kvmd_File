@@ -1,0 +1,14 @@
+# FOLDER = pikvm
+# FOLDER = pikvm
+# FOLDER = rock
+
+# BOARD = rpi4
+# BOARD = generic
+# ARCH = arm
+# ARCH = aarch64
+
+sudo make os 2>&1 | tee ~/Desktop/Project/Log/os/{FOLDER}_{BOARD}_{ARCH}.txt
+
+sudo make image 2>&1 | tee ~/Desktop/Project/Log/image/{FOLDER}_{BOARD}_{ARCH}.txt
+
+sudo make install 2>&1 | tee ~/Desktop/install_rock64_generic_aarch64.txt

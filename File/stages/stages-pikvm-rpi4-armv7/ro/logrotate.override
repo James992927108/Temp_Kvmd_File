@@ -1,3 +1,0 @@
-[Service]
-ExecStart=
-ExecStart=/usr/sbin/logrotate --verbose --state /var/tmp/logrotate.status /etc/logrotate.conf
