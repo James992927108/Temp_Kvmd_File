@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-PWR_PIN = 18
+PWR_PIN = 13
 
 GPIO.setwarnings(False)     #disable warnings
 GPIO.setmode(GPIO.BOARD)
