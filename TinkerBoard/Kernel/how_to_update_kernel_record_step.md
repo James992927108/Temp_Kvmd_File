@@ -104,7 +104,7 @@ Tinker's dts is in mainline kernel, under the name rk3288-tinker-s.dts.(see: arm
     > 2. search *Disks*
     > 3. select *TinkerBoard UMS* and *Filesystem Partition 2*
     > 4. look UUID
-    > <img src="img/disks.png" alt="drawing"/>
+    > <img src="Img/disks.png" alt="drawing"/>
 
 9. Modity extlinux.conf
     ```
@@ -115,7 +115,7 @@ Tinker's dts is in mainline kernel, under the name rk3288-tinker-s.dts.(see: arm
         append console=ttyS3,115200n8 earlyprintk quiet splash plymouth.ignore-serial-consoles root=UUID=68781559-87cf-43d3-8a94-fd4294d6ef72 console=tty1 rw init=/sbin/init
     ```
 10. connect power and check
-    > <img src="img/uname_pacman_version.png" alt="drawing"/>
+    > <img src="Img/uname_pacman_version.png" alt="drawing"/>
 
 ### How to check if the modules have loaded in linux kernel ?
 > lsmod  
@@ -129,7 +129,7 @@ if use uart3, need to modifty extlinux
     to  
     'append console=ttyS3,115200n8 earlyprintk quiet splash plymouth.ignore-serial-consoles root=UUID=68781559-87cf-43d3-8a94-fd4294d6ef72 console=tty1 rw init=/sbin/init'
 - use *USB convert UART TTL* to connect tinkerboard and pc by follow: 
-    > <img src="img/gpio-pinout.png" alt="drawing"/>
+    > <img src="Img/gpio-pinout.png" alt="drawing"/>
 
 - pc(host) open terminal use:
 > sudo minicom -D /dev/ttyUSB0 -b 115200 
